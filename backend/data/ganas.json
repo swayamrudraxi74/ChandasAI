@@ -1,0 +1,118 @@
+{
+  "ganas": [
+    {
+      "name": "ma",
+      "symbol": "म",
+      "pattern": "GGG",
+      "sequence": [
+        "guru",
+        "guru",
+        "guru"
+      ],
+      "mnemonic": "मगण"
+    },
+    {
+      "name": "ya",
+      "symbol": "य",
+      "pattern": "LGG",
+      "sequence": [
+        "laghu",
+        "guru",
+        "guru"
+      ],
+      "mnemonic": "यगण"
+    },
+    {
+      "name": "ra",
+      "symbol": "र",
+      "pattern": "GLG",
+      "sequence": [
+        "guru",
+        "laghu",
+        "guru"
+      ],
+      "mnemonic": "रगण"
+    },
+    {
+      "name": "sa",
+      "symbol": "स",
+      "pattern": "LLG",
+      "sequence": [
+        "laghu",
+        "laghu",
+        "guru"
+      ],
+      "mnemonic": "सगण"
+    },
+    {
+      "name": "ta",
+      "symbol": "त",
+      "pattern": "GGL",
+      "sequence": [
+        "guru",
+        "guru",
+        "laghu"
+      ],
+      "mnemonic": "तगण"
+    },
+    {
+      "name": "ja",
+      "symbol": "ज",
+      "pattern": "LGL",
+      "sequence": [
+        "laghu",
+        "guru",
+        "laghu"
+      ],
+      "mnemonic": "जगण"
+    },
+    {
+      "name": "bha",
+      "symbol": "भ",
+      "pattern": "GLL",
+      "sequence": [
+        "guru",
+        "laghu",
+        "laghu"
+      ],
+      "mnemonic": "भगण"
+    },
+    {
+      "name": "na",
+      "symbol": "न",
+      "pattern": "LLL",
+      "sequence": [
+        "laghu",
+        "laghu",
+        "laghu"
+      ],
+      "mnemonic": "नगण"
+    }
+  ],
+
+  "lookup_by_pattern": {
+    "GGG": "ma",
+    "LGG": "ya",
+    "GLG": "ra",
+    "LLG": "sa",
+    "GGL": "ta",
+    "LGL": "ja",
+    "GLL": "bha",
+    "LLL": "na"
+  },
+
+  "processing_rules": {
+    "group_size": 3,
+    "left_to_right": true,
+    "allow_partial_final_group": true
+  },
+
+  "partial_groups": {
+    "G": "guru",
+    "L": "laghu",
+    "GG": "guru_guru",
+    "GL": "guru_laghu",
+    "LG": "laghu_guru",
+    "LL": "laghu_laghu"
+  }
+}

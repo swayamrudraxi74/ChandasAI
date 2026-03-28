@@ -1,0 +1,106 @@
+{
+  "matra_meters": [
+    {
+      "name": "Arya",
+      "category": "Matra",
+      "matra_pattern": [12, 18, 12, 15],
+      "quarters": 4,
+      "description": "Classical mātrā-based meter; counted by mātrās, not syllables",
+      "yati": [6],
+      "rules": {
+        "laghu_value": 1,
+        "guru_value": 2,
+        "final_guru_optional": true
+      },
+      "example": "ज्ञानं भारः क्रियां विना"
+    },
+    {
+      "name": "Giti",
+      "category": "Matra",
+      "matra_pattern": [12, 18, 12, 18],
+      "quarters": 4,
+      "description": "Variant of Arya with longer fourth quarter",
+      "yati": [6],
+      "rules": {
+        "laghu_value": 1,
+        "guru_value": 2
+      }
+    },
+    {
+      "name": "Upagiti",
+      "category": "Matra",
+      "matra_pattern": [12, 15, 12, 15],
+      "quarters": 4,
+      "description": "Shortened matra variant",
+      "yati": [6]
+    },
+    {
+      "name": "Udgiti",
+      "category": "Matra",
+      "matra_pattern": [12, 15, 12, 18],
+      "quarters": 4,
+      "description": "Mixed matra extension form",
+      "yati": [6]
+    },
+    {
+      "name": "Aupacchandasika",
+      "category": "Matra",
+      "matra_pattern": [16, 16, 16, 16],
+      "quarters": 4,
+      "description": "Equal matra distribution across all quarters",
+      "yati": [8]
+    },
+    {
+      "name": "Vaitaliya",
+      "category": "Matra",
+      "matra_pattern": [14, 14, 14, 14],
+      "quarters": 4,
+      "description": "Symmetrical matra meter",
+      "yati": [7]
+    },
+    {
+      "name": "Mattagajendra",
+      "category": "Matra",
+      "matra_pattern": [19, 19, 19, 19],
+      "quarters": 4,
+      "description": "Long matra meter used in ornate verse",
+      "yati": [9]
+    },
+    {
+      "name": "Dodhaka",
+      "category": "Matra",
+      "matra_pattern": [13, 13, 13, 13],
+      "quarters": 4,
+      "description": "Balanced short-form matra meter",
+      "yati": [6]
+    },
+    {
+      "name": "Gatha",
+      "category": "Matra",
+      "matra_pattern": [16, 18, 16, 18],
+      "quarters": 4,
+      "description": "Common Prakrit/Sanskrit mixed matra form",
+      "yati": [8]
+    },
+    {
+      "name": "Pramana",
+      "category": "Matra",
+      "matra_pattern": [12, 12, 12, 12],
+      "quarters": 4,
+      "description": "Strict equal matra meter",
+      "yati": [6]
+    }
+  ],
+
+  "global_rules": {
+    "laghu_value": 1,
+    "guru_value": 2,
+    "count_by_matra_not_syllable": true,
+    "allow_final_guru_variation": true
+  },
+
+  "processing_notes": {
+    "evaluate_each_pada_separately": true,
+    "compare_total_matra_sequence": true
+  }
+}

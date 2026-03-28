@@ -1,0 +1,194 @@
+{
+  "meters": [
+    {
+      "name": "Anushtubh",
+      "category": "Akshara",
+      "syllables_per_pada": 8,
+      "padas": 4,
+      "pattern": "8-8-8-8",
+      "gana_pattern": [],
+      "yati": [4],
+      "example": "karmaṇy evādhikāras te mā phaleṣu kadācana"
+    },
+    {
+      "name": "Indravajra",
+      "category": "Akshara",
+      "syllables_per_pada": 11,
+      "padas": 4,
+      "pattern": "– – u – u – – u u – x",
+      "gana_pattern": ["ta", "ja", "ta", "ga"],
+      "yati": [5]
+    },
+    {
+      "name": "Upendravajra",
+      "category": "Akshara",
+      "syllables_per_pada": 11,
+      "padas": 4,
+      "pattern": "u – – u – – u u – u x",
+      "gana_pattern": ["ja", "ta", "ja", "ga"],
+      "yati": [5]
+    },
+    {
+      "name": "Vasantatilaka",
+      "category": "Akshara",
+      "syllables_per_pada": 14,
+      "pattern": "– – u u – u – – | u u – u – –",
+      "gana_pattern": ["ta", "bha", "ja", "ta", "ga"],
+      "yati": [8]
+    },
+    {
+      "name": "Mandakranta",
+      "category": "Akshara",
+      "syllables_per_pada": 17,
+      "pattern": "– – – u u – – u u – u – – u u – x",
+      "gana_pattern": ["ma", "bha", "na", "ta", "ta", "ga"],
+      "yati": [10]
+    },
+    {
+      "name": "Shardulavikridita",
+      "category": "Akshara",
+      "syllables_per_pada": 19,
+      "pattern": "– – – u u – u – – u u – u u – u – – x",
+      "gana_pattern": ["ma", "sa", "ja", "sa", "ta", "ta", "ga"],
+      "yati": [12]
+    },
+    {
+      "name": "Sragdhara",
+      "category": "Akshara",
+      "syllables_per_pada": 21,
+      "pattern": "– – – u u – – – u u – u u – – u u – u – x",
+      "gana_pattern": ["ma", "ra", "bha", "na", "ta", "ta", "ga"],
+      "yati": [7, 14]
+    },
+    {
+      "name": "Malini",
+      "category": "Akshara",
+      "syllables_per_pada": 15,
+      "pattern": "– – u u – u – – u u – u – – x",
+      "gana_pattern": ["ta", "bha", "ja", "ta", "ga"],
+      "yati": [8]
+    },
+    {
+      "name": "Shikharini",
+      "category": "Akshara",
+      "syllables_per_pada": 17,
+      "pattern": "– – u u – – u u – u – – u u – u x",
+      "gana_pattern": ["ta", "ra", "ja", "ta", "ga"],
+      "yati": [9]
+    },
+    {
+      "name": "Prithvi",
+      "category": "Akshara",
+      "syllables_per_pada": 17,
+      "pattern": "– u – – u u – u – – u u – u – – x",
+      "gana_pattern": ["ja", "ta", "bha", "ta", "ga"],
+      "yati": [8]
+    },
+    {
+      "name": "Totaka",
+      "category": "Akshara",
+      "syllables_per_pada": 12,
+      "pattern": "u u – – u u – – u u – –",
+      "gana_pattern": ["na", "na", "na", "na"],
+      "yati": [6]
+    },
+    {
+      "name": "Bhujangaprayata",
+      "category": "Akshara",
+      "syllables_per_pada": 12,
+      "pattern": "u u – u u – u u – u u –",
+      "gana_pattern": ["ya", "ya", "ya", "ya"],
+      "yati": [6]
+    },
+    {
+      "name": "Drutavilambita",
+      "category": "Akshara",
+      "syllables_per_pada": 14,
+      "pattern": "u – u – – u u – u – – u u –",
+      "gana_pattern": ["ra", "ja", "ta", "ja", "ga"],
+      "yati": [7]
+    },
+    {
+      "name": "Harini",
+      "category": "Akshara",
+      "syllables_per_pada": 14,
+      "pattern": "– u – u – – u u – u – – u x",
+      "gana_pattern": ["ra", "ta", "ja", "ta", "ga"],
+      "yati": [7]
+    },
+    {
+      "name": "Rathoddhata",
+      "category": "Akshara",
+      "syllables_per_pada": 16,
+      "pattern": "– – u – – u u – – u – – u u – x",
+      "gana_pattern": ["ta", "ra", "ta", "ja", "ga"],
+      "yati": [8]
+    },
+    {
+      "name": "Arya",
+      "category": "Matra",
+      "matra_pattern": [12, 18, 12, 15],
+      "yati": [6]
+    },
+    {
+      "name": "Giti",
+      "category": "Matra",
+      "matra_pattern": [12, 18, 12, 18],
+      "yati": [6]
+    },
+    {
+      "name": "Upagiti",
+      "category": "Matra",
+      "matra_pattern": [12, 15, 12, 15],
+      "yati": [6]
+    },
+    {
+      "name": "Aupacchandasika",
+      "category": "Matra",
+      "matra_pattern": [16, 16, 16, 16],
+      "yati": [8]
+    },
+    {
+      "name": "Mattamayura",
+      "category": "Akshara",
+      "syllables_per_pada": 13,
+      "pattern": "– – u u – – u u – u – – x",
+      "gana_pattern": ["ta", "ra", "ja", "ga"]
+    },
+    {
+      "name": "Kusumitalata",
+      "category": "Akshara",
+      "syllables_per_pada": 16,
+      "pattern": "u u – – u u – – u – u – – u u –",
+      "gana_pattern": ["na", "na", "ra", "ja", "ga"]
+    },
+    {
+      "name": "Panchachamara",
+      "category": "Akshara",
+      "syllables_per_pada": 16,
+      "pattern": "– – u u – u – – u u – u – – u x",
+      "gana_pattern": ["ta", "bha", "ja", "ta", "ga"]
+    },
+    {
+      "name": "Chitralekha",
+      "category": "Akshara",
+      "syllables_per_pada": 18,
+      "pattern": "– u – – u u – – u u – u – – u u – x",
+      "gana_pattern": ["ja", "ra", "bha", "ta", "ga"]
+    },
+    {
+      "name": "Meghavisphurjita",
+      "category": "Akshara",
+      "syllables_per_pada": 19,
+      "pattern": "– – – u – u u – – u u – u – – u u – x",
+      "gana_pattern": ["ma", "ja", "ta", "bha", "ga"]
+    },
+    {
+      "name": "Viyogini",
+      "category": "Akshara",
+      "syllables_per_pada": 17,
+      "pattern": "u – – u u – – u – u – – u u – u x",
+      "gana_pattern": ["ja", "bha", "ta", "ja", "ga"]
+    }
+  ]
+}

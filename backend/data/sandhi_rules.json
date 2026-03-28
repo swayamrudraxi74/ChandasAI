@@ -1,0 +1,105 @@
+{
+  "sandhi_rules": {
+    "vowel_sandhi": [
+      {
+        "input": ["a", "a"],
+        "output": "ā"
+      },
+      {
+        "input": ["a", "i"],
+        "output": "e"
+      },
+      {
+        "input": ["a", "ī"],
+        "output": "e"
+      },
+      {
+        "input": ["a", "u"],
+        "output": "o"
+      },
+      {
+        "input": ["a", "ū"],
+        "output": "o"
+      },
+      {
+        "input": ["a", "ṛ"],
+        "output": "ar"
+      },
+      {
+        "input": ["ā", "a"],
+        "output": "ā"
+      },
+      {
+        "input": ["i", "a"],
+        "output": "ya"
+      },
+      {
+        "input": ["u", "a"],
+        "output": "va"
+      }
+    ],
+
+    "visarga_sandhi": [
+      {
+        "input": "ḥ + k",
+        "output": "ḥk"
+      },
+      {
+        "input": "ḥ + p",
+        "output": "ḥp"
+      },
+      {
+        "input": "ḥ + s",
+        "output": "ḥs"
+      }
+    ],
+
+    "anusvara_sandhi": [
+      {
+        "input": "ṃ + k",
+        "output": "ṅk"
+      },
+      {
+        "input": "ṃ + c",
+        "output": "ñc"
+      },
+      {
+        "input": "ṃ + ṭ",
+        "output": "ṇṭ"
+      },
+      {
+        "input": "ṃ + t",
+        "output": "nt"
+      },
+      {
+        "input": "ṃ + p",
+        "output": "mp"
+      }
+    ],
+
+    "consonant_sandhi": [
+      {
+        "input": "t + ś",
+        "output": "cch"
+      },
+      {
+        "input": "d + dh",
+        "output": "ddh"
+      },
+      {
+        "input": "s + k",
+        "output": "sk"
+      }
+    ]
+  },
+
+  "processing_rules": {
+    "apply_before_meter_detection": false,
+    "preserve_original_input": true,
+    "optional_analysis_mode": true
+  },
+
+  "notes": {
+    "hackathon_mode": "Use sandhi only if input words are separate and need joining for proper syllable detection"
+  }
+}

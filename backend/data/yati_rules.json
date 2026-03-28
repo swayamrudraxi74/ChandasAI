@@ -1,0 +1,135 @@
+{
+  "yati_rules": [
+    {
+      "meter": "Anushtubh",
+      "pause_positions": [4],
+      "description": "Pause after 4 syllables in each pada"
+    },
+    {
+      "meter": "Indravajra",
+      "pause_positions": [5],
+      "description": "Pause after 5 syllables"
+    },
+    {
+      "meter": "Upendravajra",
+      "pause_positions": [5],
+      "description": "Pause after 5 syllables"
+    },
+    {
+      "meter": "Vasantatilaka",
+      "pause_positions": [8],
+      "description": "Main caesura after 8 syllables"
+    },
+    {
+      "meter": "Mandakranta",
+      "pause_positions": [10],
+      "description": "Long-flow pause after 10 syllables"
+    },
+    {
+      "meter": "Shardulavikridita",
+      "pause_positions": [12],
+      "description": "Pause after 12 syllables"
+    },
+    {
+      "meter": "Sragdhara",
+      "pause_positions": [7, 14],
+      "description": "Dual pause structure"
+    },
+    {
+      "meter": "Malini",
+      "pause_positions": [8],
+      "description": "Pause after middle section"
+    },
+    {
+      "meter": "Shikharini",
+      "pause_positions": [9],
+      "description": "Balanced pause after 9 syllables"
+    },
+    {
+      "meter": "Prithvi",
+      "pause_positions": [8],
+      "description": "Central pause"
+    },
+    {
+      "meter": "Totaka",
+      "pause_positions": [6],
+      "description": "Equal half split"
+    },
+    {
+      "meter": "Bhujangaprayata",
+      "pause_positions": [6],
+      "description": "Snake-like rhythmic midpoint"
+    },
+    {
+      "meter": "Drutavilambita",
+      "pause_positions": [7],
+      "description": "Balanced pause"
+    },
+    {
+      "meter": "Harini",
+      "pause_positions": [7],
+      "description": "Midpoint pause"
+    },
+    {
+      "meter": "Rathoddhata",
+      "pause_positions": [8],
+      "description": "Even split"
+    },
+    {
+      "meter": "Arya",
+      "pause_positions": [6],
+      "description": "Matra pause after 6 matras"
+    },
+    {
+      "meter": "Giti",
+      "pause_positions": [6],
+      "description": "Matra pause"
+    },
+    {
+      "meter": "Upagiti",
+      "pause_positions": [6],
+      "description": "Matra midpoint"
+    },
+    {
+      "meter": "Udgiti",
+      "pause_positions": [6],
+      "description": "Matra midpoint"
+    },
+    {
+      "meter": "Aupacchandasika",
+      "pause_positions": [8],
+      "description": "Equal split"
+    },
+    {
+      "meter": "Vaitaliya",
+      "pause_positions": [7],
+      "description": "Symmetrical pause"
+    },
+    {
+      "meter": "Mattagajendra",
+      "pause_positions": [9],
+      "description": "Heavy rhythmic pause"
+    },
+    {
+      "meter": "Dodhaka",
+      "pause_positions": [6],
+      "description": "Short balanced pause"
+    },
+    {
+      "meter": "Gatha",
+      "pause_positions": [8],
+      "description": "Common verse pause"
+    },
+    {
+      "meter": "Pramana",
+      "pause_positions": [6],
+      "description": "Strict central pause"
+    }
+  ],
+
+  "global_rules": {
+    "apply_per_pada": true,
+    "allow_meter_specific_override": true,
+    "pause_marker": "|"
+  }
+}

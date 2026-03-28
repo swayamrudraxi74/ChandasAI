@@ -1,0 +1,106 @@
+{
+  "test_cases": [
+    {
+      "id": 1,
+      "input": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन । मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥",
+      "transliteration": "karmaṇyevādhikāraste mā phaleṣu kadācana mā karmaphalaheturbhūrmā te saṅgo'stvakarmaṇi",
+      "expected_meter": "Anushtubh",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 2,
+      "input": "वागर्थाविव सम्पृक्तौ वागर्थप्रतिपत्तये । जगतः पितरौ वन्दे पार्वतीपरमेश्वरौ ॥",
+      "transliteration": "vāgarthāviva sampṛktau vāgarthapratipattaye jagataḥ pitarau vande pārvatīparameśvarau",
+      "expected_meter": "Vasantatilaka",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 3,
+      "input": "कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः",
+      "transliteration": "kaścitkāntāvirahaguruṇā svādhikārātpramattaḥ",
+      "expected_meter": "Mandakranta",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 4,
+      "input": "अस्त्युत्तरस्यां दिशि देवतात्मा हिमालयो नाम नगाधिराजः",
+      "transliteration": "astyuttarasyāṃ diśi devatātmā himālayo nāma nagādhirājaḥ",
+      "expected_meter": "Shardulavikridita",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 5,
+      "input": "भजे वायुपुत्रं भजे वालगात्रम्",
+      "transliteration": "bhaje vāyuputraṃ bhaje vālagātram",
+      "expected_meter": "Bhujangaprayata",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 6,
+      "input": "विदिताखिलशास्त्रसुधाजलधे",
+      "transliteration": "viditākhilaśāstrasudhājaladhe",
+      "expected_meter": "Totaka",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 7,
+      "input": "ज्ञानं परमं ध्येयं",
+      "transliteration": "jñānaṃ paramaṃ dhyeyam",
+      "expected_meter": "Arya",
+      "expected_category": "matra"
+    },
+
+    {
+      "id": 8,
+      "input": "शिवं शान्तं शाश्वतम्",
+      "transliteration": "śivaṃ śāntaṃ śāśvatam",
+      "expected_meter": "Giti",
+      "expected_category": "matra"
+    },
+
+    {
+      "id": 9,
+      "input": "धर्मो रक्षति रक्षितः",
+      "transliteration": "dharmo rakṣati rakṣitaḥ",
+      "expected_meter": "Vaitaliya",
+      "expected_category": "matra"
+    },
+
+    {
+      "id": 10,
+      "input": "indrasya vajra iva dṛḍhaśaktirastu",
+      "transliteration": "indrasya vajra iva dṛḍhaśaktirastu",
+      "expected_meter": "Indravajra",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 11,
+      "input": "upendratejo vijayāya bhūyāt",
+      "transliteration": "upendratejo vijayāya bhūyāt",
+      "expected_meter": "Upendravajra",
+      "expected_category": "varna"
+    },
+
+    {
+      "id": 12,
+      "input": "giriśikharanivāsini devi namaste",
+      "transliteration": "giriśikharanivāsini devi namaste",
+      "expected_meter": "Shikharini",
+      "expected_category": "varna"
+    }
+  ],
+
+  "validation_rules": {
+    "accept_devanagari": true,
+    "accept_transliteration": true,
+    "ignore_punctuation": true,
+    "normalize_case": true
+  }
+}

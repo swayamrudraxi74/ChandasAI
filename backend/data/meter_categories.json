@@ -1,0 +1,79 @@
+{
+  "meter_categories": [
+    {
+      "name": "Akshara",
+      "description": "Meters based on fixed syllable count (akṣara count)",
+      "counting_method": "syllables",
+      "matching_engine": "syllable_detector",
+      "examples": [
+        "Anushtubh",
+        "Indravajra",
+        "Upendravajra",
+        "Vasantatilaka",
+        "Mandakranta",
+        "Shardulavikridita",
+        "Sragdhara",
+        "Malini",
+        "Shikharini",
+        "Bhujangaprayata"
+      ]
+    },
+    {
+      "name": "Matra",
+      "description": "Meters based on total mātrā count",
+      "counting_method": "matras",
+      "matching_engine": "matra_counter",
+      "examples": [
+        "Arya",
+        "Giti",
+        "Upagiti",
+        "Udgiti",
+        "Aupacchandasika",
+        "Vaitaliya",
+        "Mattagajendra"
+      ]
+    },
+    {
+      "name": "Sama",
+      "description": "All four padas have identical structure",
+      "counting_method": "equal_pattern",
+      "examples": [
+        "Anushtubh",
+        "Vasantatilaka",
+        "Mandakranta",
+        "Shardulavikridita"
+      ]
+    },
+    {
+      "name": "Ardhasama",
+      "description": "First and third padas match, second and fourth match",
+      "counting_method": "paired_pattern",
+      "examples": [
+        "Indravajra",
+        "Upendravajra"
+      ]
+    },
+    {
+      "name": "Vishama",
+      "description": "Unequal pada structures",
+      "counting_method": "irregular_pattern",
+      "examples": [
+        "Arya"
+      ]
+    }
+  ],
+
+  "priority_order": [
+    "Akshara",
+    "Matra",
+    "Sama",
+    "Ardhasama",
+    "Vishama"
+  ],
+
+  "matching_strategy": {
+    "first_detect_counting_system": true,
+    "then_apply_category_filter": true,
+    "then_match_meter_pattern": true
+  }
+}

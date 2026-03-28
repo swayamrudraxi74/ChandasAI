@@ -1,0 +1,124 @@
+{
+  "meter_aliases": {
+    "Anushtubh": [
+      "Anustubh",
+      "Anuṣṭubh",
+      "Shloka",
+      "Śloka"
+    ],
+
+    "Indravajra": [
+      "Indra Vajra",
+      "Indravajrā"
+    ],
+
+    "Upendravajra": [
+      "Upendra Vajra",
+      "Upendravajrā"
+    ],
+
+    "Vasantatilaka": [
+      "Vasanta Tilaka",
+      "Vasantatilakā"
+    ],
+
+    "Mandakranta": [
+      "Manda Kranta",
+      "Mandākrāntā"
+    ],
+
+    "Shardulavikridita": [
+      "Shardula Vikridita",
+      "Śārdūlavikrīḍita",
+      "Shardulavikrida"
+    ],
+
+    "Sragdhara": [
+      "Sragdharā",
+      "Srag Dhara"
+    ],
+
+    "Malini": [
+      "Mālinī",
+      "Malinī"
+    ],
+
+    "Shikharini": [
+      "Śikharinī",
+      "Shikharinī"
+    ],
+
+    "Prithvi": [
+      "Pṛthvī",
+      "Prthvi"
+    ],
+
+    "Totaka": [
+      "Toṭaka"
+    ],
+
+    "Bhujangaprayata": [
+      "Bhujanga Prayata",
+      "Bhujangaprayātā"
+    ],
+
+    "Drutavilambita": [
+      "Druta Vilambita"
+    ],
+
+    "Harini": [
+      "Hariṇī",
+      "Harinī"
+    ],
+
+    "Rathoddhata": [
+      "Rathoddhatā"
+    ],
+
+    "Arya": [
+      "Āryā"
+    ],
+
+    "Giti": [
+      "Gīti"
+    ],
+
+    "Upagiti": [
+      "Upagīti"
+    ],
+
+    "Udgiti": [
+      "Udgīti"
+    ],
+
+    "Aupacchandasika": [
+      "Aupacchandāsika"
+    ],
+
+    "Vaitaliya": [
+      "Vaitālīya"
+    ],
+
+    "Mattagajendra": [
+      "Matta Gajendra"
+    ],
+
+    "Dodhaka": [
+      "Doḍhaka"
+    ],
+
+    "Gatha": [
+      "Gāthā"
+    ],
+
+    "Pramana": [
+      "Pramāṇa"
+    ]
+  },
+
+  "matching_rules": {
+    "ignore_case": true,
+    "ignore_spaces": true,
+    "normalize_diacritics": true
+  }
+}

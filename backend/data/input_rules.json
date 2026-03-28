@@ -1,0 +1,102 @@
+{
+  "accepted_input_types": [
+    {
+      "name": "IAST",
+      "description": "Standard Sanskrit transliteration with diacritics",
+      "examples": [
+        "karmaṇy evādhikāras te mā phaleṣu kadācana",
+        "śrīmad bhagavad gītā"
+      ]
+    },
+    {
+      "name": "Devanagari",
+      "description": "Unicode Sanskrit/Hindi script input",
+      "examples": [
+        "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
+        "श्रीमद्भगवद्गीता"
+      ]
+    },
+    {
+      "name": "Plain English Transliteration",
+      "description": "Without diacritics, approximate Sanskrit typing",
+      "examples": [
+        "karmanyevaadhikaraste maa phaleshu kadaachana",
+        "shrimad bhagavad gita"
+      ]
+    }
+  ],
+
+  "normalization_pipeline": [
+    "trim_whitespace",
+    "remove_extra_spaces",
+    "normalize_unicode",
+    "detect_script",
+    "convert_devanagari_to_iast_if_needed",
+    "convert_plain_english_aliases_if_needed",
+    "standardize_diacritics"
+  ],
+
+  "script_detection": {
+    "devanagari_range": "\\u0900-\\u097F",
+    "iast_characters": [
+      "ā",
+      "ī",
+      "ū",
+      "ṛ",
+      "ṝ",
+      "ḷ",
+      "ṅ",
+      "ñ",
+      "ṭ",
+      "ḍ",
+      "ṇ",
+      "ś",
+      "ṣ",
+      "ḥ",
+      "ṃ"
+    ]
+  },
+
+  "allowed_punctuation": [
+    "।",
+    "॥",
+    ".",
+    ",",
+    ";",
+    ":",
+    "?",
+    "!"
+  ],
+
+  "ignored_symbols": [
+    "(",
+    ")",
+    "[",
+    "]",
+    "{",
+    "}",
+    "\"",
+    "'"
+  ],
+
+  "line_break_handling": {
+    "multiple_lines_allowed": true,
+    "join_lines_before_processing": true
+  },
+
+  "meter_input_constraints": {
+    "minimum_syllables": 3,
+    "maximum_syllables": 200
+  },
+
+  "special_handling": {
+    "remove_avagraha": false,
+    "preserve_visarga": true,
+    "preserve_anusvara": true
+  },
+
+  "output_standard": {
+    "target_format": "IAST",
+    "preserve_original_input": true
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "basic_consonants": [
+    "k",
+    "kh",
+    "g",
+    "gh",
+    "ṅ",
+    "c",
+    "ch",
+    "j",
+    "jh",
+    "ñ",
+    "ṭ",
+    "ṭh",
+    "ḍ",
+    "ḍh",
+    "ṇ",
+    "t",
+    "th",
+    "d",
+    "dh",
+    "n",
+    "p",
+    "ph",
+    "b",
+    "bh",
+    "m",
+    "y",
+    "r",
+    "l",
+    "v",
+    "ś",
+    "ṣ",
+    "s",
+    "h"
+  ],
+
+  "aspirated_consonants": [
+    "kh",
+    "gh",
+    "ch",
+    "jh",
+    "ṭh",
+    "ḍh",
+    "th",
+    "dh",
+    "ph",
+    "bh"
+  ],
+
+  "semi_vowels": [
+    "y",
+    "r",
+    "l",
+    "v"
+  ],
+
+  "sibilants": [
+    "ś",
+    "ṣ",
+    "s"
+  ],
+
+  "nasals": [
+    "ṅ",
+    "ñ",
+    "ṇ",
+    "n",
+    "m"
+  ],
+
+  "guru_causing_clusters": [
+    "kk",
+    "kt",
+    "kṣ",
+    "tr",
+    "jñ",
+    "dv",
+    "tv",
+    "dhv",
+    "ndr",
+    "str",
+    "sth",
+    "sm",
+    "sn",
+    "sv",
+    "pt",
+    "tm",
+    "dm",
+    "gn",
+    "gr",
+    "kr",
+    "pr",
+    "br",
+    "dr",
+    "vr"
+  ],
+
+  "special_clusters": {
+    "kṣ": ["k", "ṣ"],
+    "jñ": ["j", "ñ"],
+    "tr": ["t", "r"],
+    "śr": ["ś", "r"]
+  },
+
+  "anusvara_and_visarga": {
+    "anusvara": "ṃ",
+    "visarga": "ḥ"
+  },
+
+  "virama_behavior": {
+    "virama_supported": true,
+    "removes_inherent_vowel": true
+  },
+
+  "processing_rules": {
+    "detect_longest_cluster_first": true,
+    "cluster_after_short_vowel_makes_guru": true
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "short_vowels": [
+    "a",
+    "i",
+    "u",
+    "ṛ",
+    "ḷ"
+  ],
+
+  "long_vowels": [
+    "ā",
+    "ī",
+    "ū",
+    "ṝ",
+    "e",
+    "ai",
+    "o",
+    "au"
+  ],
+
+  "diphthongs": [
+    "ai",
+    "au"
+  ],
+
+  "laghu_rules": {
+    "description": "Short vowels are laghu unless followed by guru-causing conditions",
+    "applies_to": [
+      "a",
+      "i",
+      "u",
+      "ṛ",
+      "ḷ"
+    ]
+  },
+
+  "guru_rules": {
+    "description": "Long vowels and diphthongs are always guru",
+    "always_guru": [
+      "ā",
+      "ī",
+      "ū",
+      "ṝ",
+      "e",
+      "ai",
+      "o",
+      "au"
+    ]
+  },
+
+  "guru_by_position": {
+    "description": "Short vowel becomes guru if followed by consonant cluster, anusvāra, visarga, or line ending",
+    "conditions": [
+      "followed_by_consonant_cluster",
+      "followed_by_anusvara",
+      "followed_by_visarga",
+      "end_of_pada"
+    ]
+  },
+
+  "special_cases": {
+    "optional_guru_at_line_end": true,
+    "pluta_vowels_supported": false
+  },
+
+  "vowel_priority_order": [
+    "ai",
+    "au",
+    "ā",
+    "ī",
+    "ū",
+    "ṝ",
+    "ṛ",
+    "ḷ",
+    "e",
+    "o",
+    "a",
+    "i",
+    "u"
+  ],
+
+  "processing_notes": {
+    "match_longest_first": true,
+    "diacritic_sensitive": true
+  }
+}

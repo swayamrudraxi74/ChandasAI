@@ -1,0 +1,78 @@
+{
+  "vowel_aliases": {
+    "aa": "ā",
+    "ii": "ī",
+    "ee": "ī",
+    "uu": "ū",
+    "oo": "ū",
+    "ri": "ṛ",
+    "rri": "ṝ",
+    "li": "ḷ",
+    "e": "e",
+    "ai": "ai",
+    "o": "o",
+    "au": "au"
+  },
+
+  "consonant_aliases": {
+    "sh": "ś",
+    "ss": "ṣ",
+    "chh": "ch",
+    "th": "th",
+    "dh": "dh",
+    "ph": "ph",
+    "bh": "bh",
+    "kh": "kh",
+    "gh": "gh",
+    "jh": "jh",
+    "gn": "jñ",
+    "gy": "jñ"
+  },
+
+  "retroflex_aliases": {
+    "tt": "ṭ",
+    "tth": "ṭh",
+    "dd": "ḍ",
+    "ddh": "ḍh",
+    "nn": "ṇ"
+  },
+
+  "nasal_aliases": {
+    "m.": "ṃ",
+    "n.": "ṃ",
+    "m": "m"
+  },
+
+  "visarga_aliases": {
+    "h.": "ḥ",
+    "ah": "aḥ"
+  },
+
+  "common_word_aliases": {
+    "krishna": "kṛṣṇa",
+    "rama": "rāma",
+    "shiva": "śiva",
+    "gita": "gītā",
+    "mahabharata": "mahābhārata",
+    "bhagavadgita": "bhagavadgītā",
+    "karmanyeva": "karmaṇyeva",
+    "adhikaraste": "adhikāraste",
+    "phaleshu": "phaleṣu",
+    "kadachana": "kadācana"
+  },
+
+  "normalization_order": [
+    "common_word_aliases",
+    "retroflex_aliases",
+    "consonant_aliases",
+    "vowel_aliases",
+    "nasal_aliases",
+    "visarga_aliases"
+  ],
+
+  "processing_rules": {
+    "longest_match_first": true,
+    "case_insensitive": true,
+    "preserve_unmatched_characters": true
+  }
+}
