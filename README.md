@@ -1,5 +1,10 @@
 # ChandasAI
 
+![Python](https://img.shields.io/badge/Python-Backend-3776AB.svg?logo=python&logoColor=white)
+![React](https://img.shields.io/badge/React-Frontend-20232A.svg?logo=react&logoColor=61DAFB)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688.svg?logo=fastapi&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Active-success.svg)
+
 AI-powered Sanskrit prosody analyzer for metre detection, laghu-guru parsing, recitation assistance, and poetic structure verification.
 
 ---

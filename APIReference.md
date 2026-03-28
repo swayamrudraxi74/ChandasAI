@@ -1,5 +1,9 @@
 # ChandasAI — API Reference
 
+![FastAPI](https://img.shields.io/badge/FastAPI-API-black)
+![Port](https://img.shields.io/badge/Port-8000-blue)
+![Status](https://img.shields.io/badge/Status-Active-success)
+
 Complete backend API reference for ChandasAI. The server is powered by **FastAPI** and runs the SPARSH-X analysis and audio pipeline.
 
 ← Back to [README.md](./README.md)
