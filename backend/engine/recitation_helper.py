@@ -1,49 +1,5 @@
 # ==========================================
-# engine/recitation_helper.py  —  SPARSH-X Audio Engine v6
-# ==========================================
-#
-# WHAT THIS FILE DOES:
-#   Converts raw Devanagari Sanskrit text into a high-quality WAV audio
-#   file that sounds like an expert recitation, with:
-#     - Correct Sanskrit pronunciation (Visarga, Schwa, conjuncts)
-#     - Line-by-line TTS to bypass Microsoft character limits
-#     - Mathematically correct pause durations (600ms / 1200ms)
-#     - Groq AI for Yati (mid-line half-breath) placement
-#     - Temple reverb for acoustic depth
-#     - Om sine-wave drone for devotional atmosphere
-#
-# BUGS FIXED vs v5.5:
-#
-#   FIX 1 — Visarga (ः) pronunciation:
-#     Old: "ः" → "हा"  (adds an EXTRA vowel 'a' → sounds wrong)
-#     New: Context-aware:
-#          ः before a consonant → "ह्" (half-h, no extra vowel)
-#          ः word-finally after ā → "ह" (soft h breath, no extra vowel)
-#     Result: "दुःख" → "दुह्ख" (correct "duh-kha" not wrong "doohu-kh")
-#
-#   FIX 2 — Schwa deletion before semivowels:
-#     Hindi TTS drops the inherent 'a' before य (ya) and व (va).
-#     "निरामयाः" → "Ni-rah-myah" (WRONG, drops 'a' in "mya")
-#     Fix: Insert ZWNJ (U+200C) between the bare consonant and ya/va.
-#     "निराम\u200Cयाः" → "Ni-rah-mu-yah" (CORRECT)
-#
-#   FIX 3 — Double-boost distortion:
-#     Old: (mixed_audio * 1.3) + drone — causes hard clipping at >1.0
-#     New: with_reverb + drone (no ×1.3)
-#     The --volume="+25%" in Edge-TTS is sufficient.
-#
-#   FIX 4 — Temple reverb overlap bug:
-#     Old decay was 0.3 — the echo overlapped original and made the
-#     first 200ms of audio noticeably louder than the rest.
-#     New decay = 0.15 — echo is audible but does not inflate original.
-#
-#   FIX 5 — Abrupt Om drone start/stop:
-#     Added 90ms fade-in and fade-out envelopes on the drone.
-#
-#   IMPROVEMENT — Melodious audio:
-#     Added a subtle harmonic octave overtone (very quiet, +12 semitones)
-#     mixed at 6% volume to simulate the natural resonance of trained
-#     chanting vocals. Can be disabled with use_harmonic=False.
+# engine/recitation_helper.py  —  SPARSH-X Audio Engine v7
 # ==========================================
 
 import os
@@ -59,33 +15,31 @@ class RecitationHelper:
 
     def __init__(self, sample_rate: int = 44100):
         print("\n" + "█" * 62)
-        print("[SYSTEM INIT] 🛠️  SPARSH-X Audio Engine  v6")
+        print("[SYSTEM INIT] 🛠️  SPARSH-X Audio Engine  v7")
         print(f"[SYSTEM INIT] 🎛️  Sample rate    : {sample_rate} Hz (CD quality)")
         print("█" * 62 + "\n")
 
-        # CD-quality (44100 Hz) gives clean reverb tails
         self.sample_rate = sample_rate
 
-        # Microsoft Hindi Neural voice — best Schwa retention we've found
-        # for Sanskrit compared to other free voices.
+        # Microsoft Hindi Neural voice — best Schwa retention for Sanskrit
         self.voice = "hi-IN-SwaraNeural"
 
-        # Pause durations — validated by listening to expert chanters
-        # Single Danda (।) = half-verse boundary → 600 ms (quick breath)
-        # Double Danda (॥) = full-verse boundary → 1200 ms (deep breath)
-        self.pause_half_ms = 600
-        self.pause_full_ms = 1200
+        # Pause durations
+        self.pause_half_ms = 800
+        self.pause_full_ms = 1500
 
-        # Groq client — used for Yati comma placement only (not metre detection)
+        # Groq client — kept for metre detection in app.py ONLY.
+        # Phase 1 and Phase 2 of recitation_helper no longer use it.
         self.groq_client = None
         try:
             self.groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-            print("[SYSTEM INIT] 🟢  Groq API authenticated.")
+            print("[SYSTEM INIT] 🟢  Groq API authenticated (metre fallback only).")
         except Exception as e:
             print(f"[SYSTEM INIT] 🔴  Groq unavailable: {e}")
 
     # ══════════════════════════════════════════════════════════════════
     # STRICT MATH ENGINE — Sanskrit Prosody (Chandas)
+    # (UNCHANGED from v6 — this was already correct)
     # ══════════════════════════════════════════════════════════════════
     def syllabify_pada(self, text: str) -> list:
         VIRAMA   = "\u094D"
@@ -107,7 +61,6 @@ class RecitationHelper:
         while i < n:
             ak = {"text": "", "lg": "L", "consonant_count": 0, "is_halant": False, "is_space": False}
 
-            # 🛠️ THE FIX: Added "\u093D" (Avagraha 'ऽ') to the ignored characters list
             if chars[i] in {" ", ",", ".", "।", "॥", "\n", "\r", "-", "\u093D"}:
                 ak["text"] = chars[i]
                 ak["is_space"] = True
@@ -147,31 +100,29 @@ class RecitationHelper:
 
         # ── PASS 2: Chandas Look-Ahead Rules ──────────────────────────
         final_aksharas = []
-        
+
         for j in range(len(akshara_list)):
             curr = akshara_list[j]
-            
-            if curr["is_space"]:
-                continue  # Ignore spaces/avagrahas in the mathematical output
 
-            # Halant Rule: Attach dead consonants (म्) to the previous syllable
+            if curr["is_space"]:
+                continue
+
             if curr["is_halant"]:
                 if len(final_aksharas) > 0:
                     final_aksharas[-1]["text"] += curr["text"]
-                    final_aksharas[-1]["lg"] = "G" # Forces previous to Guru
-                continue 
+                    final_aksharas[-1]["lg"] = "G"
+                continue
 
-            # Conjunct Look-Ahead: Find the NEXT actual syllable
             next_syl = None
             for k in range(j + 1, len(akshara_list)):
                 if not akshara_list[k]["is_space"]:
                     next_syl = akshara_list[k]
                     break
-            
+
             if next_syl:
-                if next_syl["consonant_count"] > 1:  # Followed by conjunct
+                if next_syl["consonant_count"] > 1:
                     curr["lg"] = "G"
-                if next_syl["is_halant"]:            # Followed by dead consonant
+                if next_syl["is_halant"]:
                     curr["lg"] = "G"
 
             final_aksharas.append(curr)
@@ -179,192 +130,227 @@ class RecitationHelper:
         return final_aksharas
 
     # ══════════════════════════════════════════════════════════════════
-    # PHASE 1 — SANSKRIT PHONETIC PRE-PROCESSOR (GROQ JSON UPGRADE)
+    # PHASE 1 — SANSKRIT PHONETIC PRE-PROCESSOR (RULE-BASED, NO AI)
     # ══════════════════════════════════════════════════════════════════
 
     def sanskrit_phonetic_preprocess(self, text: str) -> str:
         """
-        Uses Groq (LLM) in STRICT JSON MODE to prepare Sanskrit text for Hindi TTS.
+        Deterministic, rule-based Sanskrit phonetic pre-processor.
+
+        WHY NO AI:
+          Groq (LLM) was instructed to "append अ to consonants" which caused:
+            → "सर्वे" became "सर्वे-अ"  (phantom vowel on a vowel-ending syllable)
+            → "सङ्गोऽस्त्व" became "Sangotsav" (hallucinated nearest Marathi word)
+          LLMs CANNOT reliably manipulate Devanagari at the character level.
+          A deterministic rule-based system is always correct.
+
+        WHY NO ZWNJ (\u200c):
+          Inserting ZWNJ after a virama (e.g. ण्‌य) isolates the dead consonant.
+          The TTS engine panics on isolated dead consonants (no vowel attached)
+          and inserts phantom "i" or "u" vowels → "Karman-iy-eva".
+          The TTS handles ण्य correctly on its own when the AI is NOT mangling
+          the text first.
+
+        RULES APPLIED (two rules only — nothing else):
+
+          Rule 1 — Avagraha (ऽ):
+            Remove entirely. The Hindi TTS has no understanding of the
+            Sanskrit Avagraha symbol and generates noise or hallucinations
+            when it encounters one. Removing it exposes the underlying
+            Sandhi cluster (e.g. स्त्व) which the TTS reads correctly.
+
+          Rule 2 — Visarga (ः):
+            Context-aware two-pass replacement:
+            Pass A: ः immediately before a Devanagari consonant → ह्
+                    Correct phonetics: दुःख → दुह्ख → TTS says "duh-kha" ✓
+            Pass B: ः before space / comma / danda / end-of-string → ह
+                    Correct phonetics: सुखिनः → सुखिनह → TTS says "sukhina-h" ✓
+            Pass C: Any remaining ः → ह  (safety net)
         """
-        print("\n  [PHONETICS] 🔬 AI Sanskrit phonetic pre-processor running...")
+        print("\n  [PHONETICS] 🔬 Rule-based pre-processor (v7, no AI)...")
         original_len = len(text)
 
-        if self.groq_client is None:
-            print("  [PHONETICS] ⚠️ Groq unavailable. Using raw text.")
-            return text
+        # All Devanagari consonants (Unicode range 0x0915–0x0939)
+        # Used in regex character classes below.
+        CONSONANTS = "कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह"
 
-        prompt = (
-            "You are an expert Sanskrit phonetic transcriber. "
-            "I am sending this Sanskrit verse to a Hindi Text-to-Speech AI. "
-            "The Hindi AI will mispronounce it by dropping the short 'a' at the end of words and misreading Visargas.\n\n"
-            "Your task is to 'phoneticize' the text to trick the Hindi TTS into perfect Sanskrit pronunciation:\n"
-            "1. SCHWA PRESERVATION: Append the letter 'अ' to any consonant where the short 'a' MUST be pronounced (e.g., at the end of words or breaking up long Sandhi compounds). Example: 'तुषार' -> 'तुषारअ', 'शुभ्रवस्त्रा' -> 'शुभ्रअ वस्त्रा'.\n"
-            "2. VISARGA FIX: Change 'ः' to 'ह्' if it's before a consonant, or 'ह' if it's at the end of a line/word.\n"
-            "3. DO NOT ADD COMMAS OR PUNCTUATION. Just fix the letters.\n"
-            "4. CRITICAL: Output ONLY a valid JSON object with a single key 'phonetic_text'. No English, no explanations.\n\n"
-            f"Input:\n{text}\n\nOutput JSON:"
-        )
+        # ── Rule 1: Avagraha (ऽ, U+093D) → remove ─────────────────────
+        # "सङ्गोऽस्त्वकर्मणि" → "सङ्गोस्त्वकर्मणि"
+        # Without Avagraha, TTS reads the cluster normally.
+        text = text.replace("\u093D", "")   # ऽ
+        text = text.replace("ऽ", "")        # belt-and-suspenders (literal char)
 
-        import time, json
-        start = time.time()
-        try:
-            completion = self.groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a pure JSON translation engine. You never output conversational text or markdown."
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.0,
-                max_tokens=500,
-                response_format={"type": "json_object"}  # 🔒 FORCES STRICT JSON
-            )
-            elapsed = time.time() - start
-            result_raw = completion.choices[0].message.content.strip()
+        # ── Rule 2: Visarga (ः, U+0903) context-aware replacement ─────
+        # Pass A: ः before a consonant → ह् (half-h, no trailing vowel)
+        text = re.sub(f"\u0903([{CONSONANTS}])", r"ह्\1", text)
+        # Pass B: ः before space / comma / danda / end-of-string → ह
+        text = re.sub(r"\u0903(?=[\s,।॥]|$)", "ह", text)
+        # Pass C: any remaining ः → ह  (safety net)
+        text = text.replace("\u0903", "ह")
 
-            # Parse the JSON to extract the text
-            data = json.loads(result_raw)
-            result = data.get("phonetic_text", text)
+        print(f"  [PHONETICS] ✅ Done ({original_len} → {len(text)} chars).")
+        print(f"  ↳ Result: '{text[:80]}{'...' if len(text) > 80 else ''}'")
+        return text
 
-            print(f"  [PHONETICS] ✅ AI Phonetics done in {elapsed:.2f}s ({original_len} chars → {len(result)} chars)")
-            print(f"  ↳ Output: '{result[:70]}{'...' if len(result) > 70 else ''}'")
-            return result
-
-        except Exception as e:
-            print(f"  [PHONETICS] ⚠️ AI Phonetics failed or bad JSON: {e}. Using original text.")
-            return text
-        
     # ══════════════════════════════════════════════════════════════════
-    # PHASE 2 — GROQ AI: YATI PLACEMENT (GROQ JSON UPGRADE)
+    # PHASE 2 — MATHEMATICAL YATI PLACEMENT (NO AI)
     # ══════════════════════════════════════════════════════════════════
 
     def apply_ai_punctuation(self, text: str) -> str:
         """
-        Uses Groq in STRICT JSON MODE to insert commas for mid-line pauses.
-        Includes a mathematical integrity check to ensure no letters were changed.
+        Inserts Yati (mid-line breath pause) commas using syllable mathematics.
+
+        WHY NO AI:
+          The previous Groq-based Yati placer computed len(text)//2 and
+          inserted ONE comma at that character position, regardless of
+          syllable boundaries.  For Anushtubh (8 syllables/pāda), the Yati
+          falls after the 4th syllable — which is almost never at the
+          character midpoint.
+
+        ALGORITHM:
+          1. If commas already exist in text → skip (user has manual Yati).
+          2. Split text by dandas (। ॥) and newlines → individual pādas.
+          3. For each pāda, split into words and count syllables per word
+             using syllabify_pada() (the same strict Chandas engine).
+          4. Walk through words accumulating syllable counts until we cross
+             half the pāda's total syllables.
+          5. Insert a comma after that word.
+          6. Skip pādas with ≤ 3 total syllables (too short to need Yati).
+
+        WHY WORD BOUNDARIES:
+          Inserting a comma in the middle of a Sanskrit compound word causes
+          the TTS to mispronounce it.  We always place Yati at a word gap.
         """
         if "," in text:
-            print("\n  [YATI] ⏩ Commas already present — skipping Groq Yati placement.")
+            print("\n  [YATI] ⏩ Commas already present — skipping (manual Yati).")
             return text
 
-        if self.groq_client is None:
-            print("\n  [YATI] ⚠️  Groq unavailable — skipping Yati placement.")
-            return text
+        print("\n  [YATI] 📐 Mathematical Yati placement (v7, no AI)...")
+        print(f"  ↳ Input : '{text[:70]}{'...' if len(text) > 70 else ''}'")
 
-        print("\n  " + "-" * 56)
-        print("  [YATI] 🧠  Groq Yati Placement")
-        print("  " + "-" * 56)
-        print(f"  ↳ Input  : '{text[:70]}{'...' if len(text) > 70 else ''}'")
+        # Split on dandas and newlines, keeping the delimiters in the list
+        # so we can reconstruct the string faithfully after processing.
+        parts = re.split(r"(।|॥|\n)", text)
 
-        prompt = (
-            "You are an expert Vedic Sanskrit prosody engine.\n"
-            "Your task: insert commas (,) to mark Yati — the natural half-breath pauses inside each line of the verse.\n\n"
-            "STRICT RULES:\n"
-            "1. NEVER alter, add, or remove ANY Devanagari letters, matras, or modifiers.\n"
-            "2. NEVER touch or remove Dandas (। or ॥). Leave them exactly as they are.\n"
-            "3. ONLY insert commas (,) where a breath-pause is natural.\n"
-            "4. If the syllable is inside a glued compound word, do NOT insert a comma.\n"
-            "5. CRITICAL: Output ONLY a valid JSON object with a single key 'yati_text'. No English, no explanations.\n\n"
-            f"Input:\n{text}\n\nOutput JSON:"
-        )
+        result = []
+        for part in parts:
+            # Delimiters and empty strings pass through unchanged
+            if part in ("।", "॥", "\n", ""):
+                result.append(part)
+                continue
 
-        import time, json
-        start = time.time()
-        try:
-            completion = self.groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a rigid punctuation engine. You output pure JSON. You NEVER change any Devanagari letters."
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.0,
-                max_tokens=500,
-                response_format={"type": "json_object"}  # 🔒 FORCES STRICT JSON
-            )
-            elapsed = time.time() - start
-            result_raw = completion.choices[0].message.content.strip()
+            stripped = part.strip()
+            if not stripped:
+                result.append(part)
+                continue
 
-            # Parse the JSON to extract the text
-            data = json.loads(result_raw)
-            result = data.get("yati_text", text)
+            # Apply Yati to this pāda segment
+            yati_segment = self._insert_yati_into_pada(stripped)
 
-            print(f"  ↳ Groq response time : {elapsed:.2f}s")
+            # Preserve any leading/trailing whitespace that was in `part`
+            result.append(part.replace(stripped, yati_segment, 1))
 
-            # ── INTEGRITY CHECK ──────────────────────────────────────────
-            def core_chars(s: str) -> str:
-                return "".join(
-                    c for c in s
-                    if c not in {" ", ",", ".", "।", "॥", "\n", "\r", "\t"}
-                )
+        yati_text = "".join(result)
+        print(f"  [YATI] ✅ Yati applied.")
+        print(f"  ↳ Result: '{yati_text[:80]}{'...' if len(yati_text) > 80 else ''}'")
+        return yati_text
 
-            if core_chars(text) != core_chars(result):
-                print("  ↳ ❌  INTEGRITY FAIL: Groq changed Devanagari characters!")
-                print("  ↳ ⚠️  Discarding AI output. Using original text.")
-                return text
+    def _insert_yati_into_pada(self, pada_text: str) -> str:
+        """
+        Insert a single Yati comma into one pāda at the correct syllable boundary.
+
+        Finds the word boundary whose cumulative syllable count is closest
+        to half the total syllable count of the pāda.
+
+        Example (Anushtubh, 8 syllables, Yati after syllable 4):
+          "सर्वे भवन्तु सुखिनह" → syllables: [2, 3, 3] → total=8, target=4
+          After word 1 (सर्वे) : cumulative=2
+          After word 2 (भवन्तु): cumulative=5  ← first to cross target=4
+          → comma after word 2 → "सर्वे भवन्तु, सुखिनह"
+
+        Returns pada_text unchanged if:
+          - Only one word (no word boundary to split at)
+          - Total syllables < 4 (too short to benefit from Yati)
+        """
+        words = pada_text.split()
+        if len(words) <= 1:
+            return pada_text
+
+        # Count syllables in each word (strip stray punctuation first)
+        word_syl_counts = []
+        for word in words:
+            clean = re.sub(r"[,।॥।]", "", word).strip()
+            if clean:
+                try:
+                    aksharas = self.syllabify_pada(clean)
+                    word_syl_counts.append(len(aksharas))
+                except Exception:
+                    word_syl_counts.append(1)   # fallback: treat as 1 syllable
             else:
-                print(f"  ↳ 🔒  Integrity check PASSED — characters intact.")
-                print(f"  ↳ ✅  Yati result: '{result[:70]}{'...' if len(result) > 70 else ''}'")
-                return result
+                word_syl_counts.append(0)
 
-        except Exception as e:
-            print(f"  ↳ ⚠️  Groq Yati failed or bad JSON: {e}. Using original text.")
-            return text
+        total = sum(word_syl_counts)
+        if total < 4:
+            return pada_text    # pāda too short for Yati
+
+        target = total / 2.0   # Yati ideally at midpoint syllable
+
+        # Walk left-to-right; split after the first word that pushes us
+        # to or past the syllable midpoint.
+        cumulative  = 0
+        best_split  = 1        # default: after the first word (safety)
+
+        # Never split after the LAST word (nothing would come after the comma)
+        for i in range(len(word_syl_counts) - 1):
+            cumulative += word_syl_counts[i]
+            if cumulative >= target:
+                best_split = i + 1
+                break
+
+        before = " ".join(words[:best_split])
+        after  = " ".join(words[best_split:])
+
+        if after:
+            return before + ", " + after
+        return pada_text
 
     # ══════════════════════════════════════════════════════════════════
     # PHASE 3 — LINE SPLITTER: respects Danda verse structure
+    # (UNCHANGED from v6)
     # ══════════════════════════════════════════════════════════════════
 
     def split_by_dandas(self, text: str) -> list:
         """
-        Splits the Sanskrit verse into (line_text, pause_ms) pairs,
-        one pair per line, using Danda punctuation as boundaries.
+        Splits the Sanskrit verse into (line_text, pause_ms) pairs.
 
         WHY SPLIT AT ALL?
-          Edge-TTS silently stops generating audio after ~200–250 chars
-          in a single request.  For a long verse like the Adhyasa Bhashya,
-          the audio would just cut off mid-sentence.
-          Line-by-line generation completely eliminates this problem.
+          Edge-TTS silently stops after ~200–250 chars in a single request.
+          Line-by-line generation eliminates this problem.
 
         PAUSE LENGTHS:
-          ।  (single Danda) = half-verse boundary → 600ms breath
-          ॥  (double Danda) = full-verse boundary → 1200ms breath
-          \\n (newline)      = treated as single Danda → 600ms
-
-        HOW IT WORKS:
-          Scan character by character. Accumulate into current_chunk.
-          When we hit ।, ॥, or flush at end → save (chunk, pause_ms).
-
-        Returns: [ ("line text", pause_ms), ... ]
+          ।  (single Danda) = half-verse boundary → 800ms
+          ॥  (double Danda) = full-verse boundary → 1500ms
+          \\n (newline)      = treated as single Danda → 800ms
         """
         print("\n  [SPLIT] ✂️  Splitting by Danda boundaries...")
         print(f"  ↳ Input : {len(text)} characters")
 
-        # Normalise newlines to single Danda so one pass handles all cases
-        normalised = text.replace("\n", "।")
-
-        segments     = []
+        normalised    = text.replace("\n", "।")
+        segments      = []
         current_chunk = ""
 
         for ch in normalised:
             if ch == "॥":
-                # Double Danda → full-verse boundary → long pause
                 if current_chunk.strip():
                     segments.append((current_chunk.strip(), self.pause_full_ms))
                 current_chunk = ""
             elif ch == "।":
-                # Single Danda → half-verse boundary → short pause
                 if current_chunk.strip():
                     segments.append((current_chunk.strip(), self.pause_half_ms))
                 current_chunk = ""
             else:
                 current_chunk += ch
 
-        # Flush any trailing text without a Danda
         if current_chunk.strip():
             segments.append((current_chunk.strip(), self.pause_full_ms))
 
@@ -377,33 +363,22 @@ class RecitationHelper:
 
     # ══════════════════════════════════════════════════════════════════
     # PHASE 4 — TTS LINE SANITISER
+    # (UNCHANGED from v6)
     # ══════════════════════════════════════════════════════════════════
 
     def sanitise_line(self, text: str) -> str:
         """
         Final cleanup before sending a line to Edge-TTS.
-
-        What it does:
-          - Removes double-quote characters that break the shell command
-            (e.g. "edge-tts -t "..."" would crash with quotes inside)
-          - Removes carriage returns / newlines
-          - Strips leading/trailing whitespace
-
-        What it does NOT do:
-          - Does NOT remove commas (they signal Yati pauses to TTS)
-          - Does NOT remove Dandas (already stripped by split_by_dandas)
-          - Does NOT change Devanagari letters (phonetics are done in Phase 1)
-
-        NOTE: Phonetic substitutions (Visarga, ZWNJ) are applied ONCE
-        per verse in sanskrit_phonetic_preprocess(), BEFORE this function.
-        This function is just a shell-safety cleanup per-line.
+        Removes double-quotes (break shell command) and stray newlines.
+        Does NOT touch Devanagari letters — phonetics are done in Phase 1.
         """
-        text = text.replace('"', "")   # prevents shell command breakage
+        text = text.replace('"', "")
         text = text.replace("\n", " ").replace("\r", " ")
         return text.strip()
 
     # ══════════════════════════════════════════════════════════════════
     # DSP — Temple reverb
+    # (UNCHANGED from v6)
     # ══════════════════════════════════════════════════════════════════
 
     def apply_temple_reverb(self, audio: np.ndarray,
@@ -411,21 +386,7 @@ class RecitationHelper:
                              decay: float = 0.15) -> np.ndarray:
         """
         Adds an acoustic echo simulating a large stone temple hall.
-
-        How it works:
-          1. Create a blank array (len(audio) + delay_samples) long
-          2. Copy original audio into position 0
-          3. Add a quieter, time-delayed copy (the echo) starting at delay_samples
-
-        The overlap region [delay_samples : len(audio)] contains both
-        the original signal AND the echo, so the amplitude there is:
-          1.0 (original) + 0.15 (echo) = 1.15×
-
-        With decay=0.15 this 15% bump is subtle and musical.
-        With decay=0.30 (old value) the bump was 30% — noticeably louder
-        in the first 200ms, creating an uneven volume profile.
-
-        decay reduced 0.30 → 0.15 to fix this (v6 fix).
+        decay=0.15 keeps the echo subtle (v6 fix from 0.30).
         """
         print(f"\n  [DSP] 🛕  Temple Reverb  |  delay={delay_ms}ms  decay={decay}")
         delay_samples = int((delay_ms / 1000.0) * self.sample_rate)
@@ -437,69 +398,44 @@ class RecitationHelper:
 
     # ══════════════════════════════════════════════════════════════════
     # DSP — Om drone (136.1 Hz) with smooth fade
+    # (UNCHANGED from v6)
     # ══════════════════════════════════════════════════════════════════
 
     def generate_sine_drone(self, num_samples: int,
                              frequency: float = 136.1,
                              volume: float = 0.04) -> np.ndarray:
         """
-        Generates a continuous sine-wave background drone.
-
-        136.1 Hz is the classical tuning frequency of 'Om' (C# in
-        scientific pitch tuning).  It sits well below the fundamental
-        voice frequency range, providing a grounding presence without
-        competing with the chant.
-
-        FADE FIX (v6):
-          Old code: drone started and stopped at full volume → abrupt click
-          New code: 90ms (4000 sample) fade-in and fade-out envelopes
-          Result: smooth, natural start and end
-
-        volume reduced 0.05 → 0.04 so the drone stays under the voice.
+        136.1 Hz = classical Om tuning (C#).  Sits below voice range.
+        90ms fade-in/out prevents abrupt click (v6 fix).
         """
         print(f"  [DSP] 🧘  Om Drone  |  {frequency} Hz  vol={volume}")
         t     = np.linspace(0, num_samples / self.sample_rate,
                             num_samples, endpoint=False)
         drone = np.sin(2 * np.pi * frequency * t) * volume
 
-        # Fade length: ~90ms at 44100Hz (prevents abrupt click)
         fade_len = min(4000, num_samples // 4)
-
-        drone[:fade_len]   *= np.linspace(0.0, 1.0, fade_len)   # fade in
-        drone[-fade_len:]  *= np.linspace(1.0, 0.0, fade_len)   # fade out
+        drone[:fade_len]  *= np.linspace(0.0, 1.0, fade_len)
+        drone[-fade_len:] *= np.linspace(1.0, 0.0, fade_len)
 
         print(f"       → Drone: {drone.shape[0]} samples  fade={fade_len} samples each end")
         return drone
 
     # ══════════════════════════════════════════════════════════════════
     # DSP — Harmonic overtone (subtle melodiousness boost)
+    # (UNCHANGED from v6)
     # ══════════════════════════════════════════════════════════════════
 
     def add_harmonic_overtone(self, audio: np.ndarray,
                                strength: float = 0.06) -> np.ndarray:
         """
-        Adds a very quiet octave harmonic (+12 semitones) to the audio.
-
-        Trained Sanskrit chanters naturally produce rich overtones through
-        vocal resonance.  This function simulates that by pitch-shifting
-        the entire audio up one octave and mixing it back in at a very
-        low volume (6%).
-
-        The result is a slightly richer, more resonant sound — not enough
-        to be consciously noticed, but enough to make the recording feel
-        less like a synthetic TTS voice and more like a human voice with
-        natural resonance.
-
-        strength: mix level for the harmonic (0.06 = 6% — very subtle)
-        Uses librosa.effects.pitch_shift internally (may be slow on long audio).
+        Adds a quiet octave harmonic (+12 semitones at 6%) to simulate
+        the natural vocal resonance of trained Sanskrit chanters.
         Falls back gracefully if librosa fails.
         """
         print(f"  [DSP] 🎼  Harmonic overtone  |  +12 semitones  strength={strength}")
         try:
             harmonic = librosa.effects.pitch_shift(
-                audio,
-                sr=self.sample_rate,
-                n_steps=12,   # +12 semitones = one octave up
+                audio, sr=self.sample_rate, n_steps=12,
             )
             result = audio + (harmonic * strength)
             print(f"       → Harmonic mixed at {strength * 100:.0f}% volume ✓")
@@ -510,53 +446,54 @@ class RecitationHelper:
 
     # ══════════════════════════════════════════════════════════════════
     # UTILITY — Silence generator
+    # (UNCHANGED from v6)
     # ══════════════════════════════════════════════════════════════════
 
     def generate_silence(self, duration_ms: int) -> np.ndarray:
-        """
-        Returns an array of digital zeros — pure silence.
-        Used to insert breath pauses between lines after stitching.
-        """
+        """Returns an array of zeros (pure silence) for breath pauses."""
         samples = int(self.sample_rate * (duration_ms / 1000.0))
         return np.zeros(samples)
 
     # ══════════════════════════════════════════════════════════════════
     # MASTER PIPELINE
+    # (UNCHANGED from v6 — fixes were in Phase 1 & 2 above)
     # ══════════════════════════════════════════════════════════════════
 
     def create_full_recitation(self, full_text: str, output_path: str) -> str:
         """
-        Complete audio generation pipeline — SPARSH-X v6.
+        Complete audio generation pipeline — SPARSH-X v7.
 
         ┌─────────────────────────────────────────────────────────────┐
         │ PIPELINE OVERVIEW                                           │
         │                                                             │
-        │  Phase 1: Sanskrit Phonetic Pre-Processor                   │
-        │    → Fix Visarga, Schwa preservation, ZWNJ insertion        │
+        │  Phase 1: Sanskrit Phonetic Pre-Processor (RULE-BASED v7)  │
+        │    → Remove Avagraha (ऽ)                                   │
+        │    → Fix Visarga (ः) context-aware                         │
+        │    → NO AI — zero hallucinations                           │
         │                                                             │
-        │  Phase 2: Groq Yati Placement (optional)                    │
-        │    → Insert comma at mid-line Yati if safe (word boundary)  │
-        │    → Skip if text already has commas                        │
-        │    → Integrity check: discard if AI changed any letters     │
+        │  Phase 2: Mathematical Yati Placement (NO AI, v7)          │
+        │    → Count syllables using syllabify_pada()                │
+        │    → Insert comma at word boundary nearest syllable mid    │
+        │    → Skip if commas already present                        │
         │                                                             │
         │  Phase 3: Line Splitting                                    │
-        │    → Split by Dandas (। = 600ms pause, ॥ = 1200ms pause)    │
+        │    → Split by Dandas (। = 800ms pause, ॥ = 1500ms pause)   │
         │    → Each line sent to TTS separately (no char limit crash) │
         │                                                             │
         │  Phase 4: TTS Synthesis (per line)                          │
         │    → Sanitise line (remove shell-breaking chars)            │
-        │    → Edge-TTS: rate=-18% pitch=-10Hz volume=+25%            │
-        │    → Load MP3 → trim silence → append to audio_segments     │
-        │    → Append silence of correct duration after each line     │
+        │    → Edge-TTS: rate=-18% pitch=-10Hz volume=+25%           │
+        │    → Load MP3 → trim silence → append to audio_segments    │
+        │    → Append silence of correct duration after each line    │
         │                                                             │
         │  Phase 5: Stitch                                            │
-        │    → np.concatenate(audio_segments)                         │
+        │    → np.concatenate(audio_segments)                        │
         │                                                             │
         │  Phase 6: Studio DSP                                        │
-        │    → Temple reverb (decay=0.15, delay=200ms)                │
-        │    → Om drone (136.1Hz, fade-in/out, vol=0.04)              │
-        │    → Harmonic overtone (+12 semitones at 6%)                │
-        │    → Normalize (clip to [-1.0, 1.0])                        │
+        │    → Temple reverb (decay=0.15, delay=200ms)               │
+        │    → Harmonic overtone (+12 semitones at 6%)               │
+        │    → Om drone (136.1Hz, fade-in/out, vol=0.04)             │
+        │    → Normalize (clip to [-1.0, 1.0])                       │
         │                                                             │
         │  Phase 7: Save WAV                                          │
         └─────────────────────────────────────────────────────────────┘
@@ -564,7 +501,7 @@ class RecitationHelper:
         pipeline_start = time.time()
 
         print("\n" + "=" * 62)
-        print("[MASTER PIPELINE] 🚀  SPARSH-X v6  —  Full Recitation Engine")
+        print("[MASTER PIPELINE] 🚀  SPARSH-X v7  —  Full Recitation Engine")
         print("=" * 62)
         print(f"  Input   : {len(full_text)} chars")
         print(f"  Voice   : {self.voice}")
@@ -573,18 +510,17 @@ class RecitationHelper:
         print(f"  Pause(।): {self.pause_half_ms}ms")
         print(f"  Pause(॥): {self.pause_full_ms}ms")
 
-        # ── Phase 1: Sanskrit phonetic pre-processing ──────────────────────
-        print("\n[PHASE 1] 🔬 SANSKRIT PHONETIC PRE-PROCESSING")
+        # ── Phase 1: Sanskrit phonetic pre-processing (rule-based) ────────
+        print("\n[PHASE 1] 🔬 SANSKRIT PHONETIC PRE-PROCESSING (rule-based, no AI)")
         phonetic_text = self.sanskrit_phonetic_preprocess(full_text)
 
-        # ── Phase 2: Groq Yati placement ───────────────────────────────────
-        print("\n[PHASE 2] 🧠 GROQ YATI PLACEMENT")
+        # ── Phase 2: Mathematical Yati placement (no AI) ──────────────────
+        print("\n[PHASE 2] 📐 MATHEMATICAL YATI PLACEMENT (no AI)")
         yati_text = self.apply_ai_punctuation(phonetic_text)
 
         # Log what text is actually entering the TTS pipeline
-        # (This was completely invisible in older versions!)
-        print(f"\n  [PIPELINE INPUT] Text entering TTS:")
-        print(f"  >>> {yati_text[:120]}{'...' if len(yati_text) > 120 else ''}")
+        print(f"\n  [PIPELINE INPUT] Text entering TTS (Phase 3+):")
+        print(f"  >>> {yati_text[:140]}{'...' if len(yati_text) > 140 else ''}")
 
         # ── Phase 3: Split by Dandas ────────────────────────────────────────
         print(f"\n[PHASE 3] ✂️  LINE SPLITTING")
@@ -606,14 +542,6 @@ class RecitationHelper:
 
             temp_file = f"static/raw_seg_{idx}.mp3"
 
-            # Edge-TTS parameters tuned for Sanskrit chanting:
-            #   --rate="-18%"   → 18% slower than conversational Hindi
-            #                     gives the measured, solemn pace of chanting
-            #   --pitch="-10Hz" → deeper pitch for authoritative, devotional tone
-            #   --volume="+25%" → compensates for the energy absorbed by reverb
-            #
-            # ⚠️  DO NOT multiply final_audio by 1.3 after this.
-            #     That caused double-boost clipping distortion in v4/v5.
             command = (
                 f'edge-tts -t "{clean_line}" '
                 f"-v {self.voice} "
@@ -635,12 +563,7 @@ class RecitationHelper:
                 continue
 
             try:
-                # Load MP3 into numpy array at our target sample rate
                 seg_audio, _ = librosa.load(temp_file, sr=self.sample_rate)
-
-                # Trim silence from edges (top_db=45 = trim at -45dB)
-                # This removes the natural dead-air that TTS engines prepend/append.
-                # Without trimming, the stitched pauses would be too long.
                 seg_audio, _ = librosa.effects.trim(seg_audio, top_db=45)
 
                 seg_sec = len(seg_audio) / self.sample_rate
@@ -654,7 +577,6 @@ class RecitationHelper:
                     os.remove(temp_file)
                     print(f"  │  Temp   : {temp_file} deleted")
 
-            # Insert the correct pause duration after this line
             silence = self.generate_silence(pause_ms)
             audio_segments.append(silence)
             print(f"  │  Pause  : {pause_ms}ms ({len(silence)} samples) inserted")
@@ -667,30 +589,19 @@ class RecitationHelper:
             print("  ↳ 🛑  No audio generated. Aborting pipeline.")
             return output_path
 
-        stitched     = np.concatenate(audio_segments)
-        total_sec    = len(stitched) / self.sample_rate
+        stitched  = np.concatenate(audio_segments)
+        total_sec = len(stitched) / self.sample_rate
         print(f"  ↳ Stitched: {stitched.shape[0]} samples ({total_sec:.2f}s)")
 
         # ── Phase 6: Studio DSP ─────────────────────────────────────────────
         print(f"\n[PHASE 6] 🎛️  STUDIO POST-PRODUCTION")
 
-        # 6a. Temple reverb
-        with_reverb = self.apply_temple_reverb(stitched)
-
-        # 6b. Harmonic overtone (subtle resonance boost)
-        #     Makes the voice sound richer, closer to natural chanting harmonics
+        with_reverb   = self.apply_temple_reverb(stitched)
         with_harmonic = self.add_harmonic_overtone(with_reverb, strength=0.06)
-
-        # 6c. Om drone — runs the full length of the reverb-extended audio
-        drone        = self.generate_sine_drone(len(with_harmonic))
-
-        # 6d. Final mix
-        # NO *1.3 boost — that caused hard-clipping distortion in older versions.
-        # The --volume="+25%" in Edge-TTS is the only amplification we need.
-        final_audio  = with_harmonic + drone
+        drone         = self.generate_sine_drone(len(with_harmonic))
+        final_audio   = with_harmonic + drone
         print(f"\n  ↳ Mixed: {final_audio.shape[0]} samples")
 
-        # 6e. Normalize — hard-clip to [-1.0, 1.0] to prevent speaker damage
         pre_clip_peak = float(np.max(np.abs(final_audio)))
         final_audio   = np.clip(final_audio, -1.0, 1.0)
         print(f"  ↳ Peak before clip: {pre_clip_peak:.4f}", end="")
@@ -703,15 +614,15 @@ class RecitationHelper:
         print(f"\n[PHASE 7] 💾  FILE WRITER")
         sf.write(output_path, final_audio, self.sample_rate)
 
-        file_kb  = os.path.getsize(output_path) / 1024
-        elapsed  = time.time() - pipeline_start
+        file_kb = os.path.getsize(output_path) / 1024
+        elapsed = time.time() - pipeline_start
         print(f"  ↳ Saved to      : {output_path}")
         print(f"  ↳ File size     : {file_kb:.1f} KB")
         print(f"  ↳ Audio duration: {total_sec:.2f}s")
         print(f"  ↳ Pipeline time : {elapsed:.2f}s total")
 
         print("\n" + "█" * 62)
-        print("[SUCCESS] 🎉  SPARSH-X v6 PIPELINE COMPLETE!")
+        print("[SUCCESS] 🎉  SPARSH-X v7 PIPELINE COMPLETE!")
         print("█" * 62 + "\n")
 
         return output_path

@@ -1,0 +1,64 @@
+CHANDASAI/
+├── backend/
+│   ├── api/
+│   │   ├── __pycache__/
+│   │   └── app.py
+│   ├── data/
+│   │   ├── consonant_rules.json
+│   │   ├── devanagari_map.json
+│   │   ├── examples.json
+│   │   ├── ganas.json
+│   │   ├── input_rules.json
+│   │   ├── matra_meters.json
+│   │   ├── meter_aliases.json
+│   │   ├── meter_categories.json
+│   │   ├── meters.json
+│   │   ├── pronunciation_rules.json
+│   │   ├── sandhi_rules.json
+│   │   ├── test_cases.json
+│   │   ├── transliteration_alias.json
+│   │   ├── vowel_rules.json
+│   │   └── yati_rules.json
+│   ├── engine/
+│   │   ├── __pycache__/
+│   │   ├── laghu_guru.py
+│   │   ├── meter_matcher.py
+│   │   ├── parser.py
+│   │   └── recitation_helper.py
+│   ├── static/
+│   ├── utils/
+│   ├── venv/
+│   ├── .env
+│   └── requirements.txt
+├── frontend/
+│   ├── node_modules/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ui/
+│   │   │   ├── AudioSection.tsx
+│   │   │   ├── AudioWaveform.tsx
+│   │   │   ├── FloatingParticles.tsx
+│   │   │   ├── FooterSection.tsx
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── MelodySection.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── PipelineSection.tsx
+│   │   │   ├── PitchMiniGraph.tsx
+│   │   │   ├── VedicBackground.tsx
+│   │   │   └── VerseInputSection.tsx
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   ├── pages/
+│   │   │   ├── Home.tsx
+│   │   │   └── not-found.tsx
+│   │   ├── App.tsx
+│   │   ├── index.css
+│   │   └── main.tsx
+│   ├── components.json
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+└── start_project.bat
