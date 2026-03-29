@@ -68,7 +68,7 @@ class RecitationHelper:
 
         # Microsoft Hindi Neural voice — best Schwa retention we've found
         # for Sanskrit compared to other free voices.
-        self.voice = "mr-IN-SwaraNeural"
+        self.voice = "hi-IN-SwaraNeural"
 
         # Pause durations — validated by listening to expert chanters
         # Single Danda (।) = half-verse boundary → 600 ms (quick breath)
